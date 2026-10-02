@@ -1,0 +1,97 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Connection test path required by Firebase integration skill
+    match /test/connection {
+      allow get, list: if true;
+    }
+
+    // Products collection
+    match /products/{productId} {
+      allow get: if isValidId(productId);
+      allow list: if true;
+      allow create: if isValidId(productId) 
+        && (!('id' in incoming()) || incoming().id == productId)
+        && incoming().name is string && incoming().name.size() > 0 && incoming().name.size() <= 200
+        && incoming().salePrice is number
+        && incoming().costPrice is number;
+      allow update: if isValidId(productId)
+        && (!('id' in incoming()) || incoming().id == productId || incoming().id == existing().id)
+        && (!('name' in incoming()) || (incoming().name is string && incoming().name.size() > 0 && incoming().name.size() <= 200))
+        && (!('salePrice' in incoming()) || incoming().salePrice is number)
+        && (!('costPrice' in incoming()) || incoming().costPrice is number);
+      allow delete: if isValidId(productId);
+    }
+
+    // Purchases collection
+    match /purchases/{purchaseId} {
+      allow get: if isValidId(purchaseId);
+      allow list: if true;
+      allow create: if isValidId(purchaseId)
+        && incoming().id == purchaseId
+        && incoming().invoiceNumber is string && incoming().invoiceNumber.size() <= 64
+        && incoming().supplierName is string && incoming().supplierName.size() <= 200
+        && incoming().total is number;
+      allow update: if isValidId(purchaseId) && incoming().id == existing().id;
+      allow delete: if isValidId(purchaseId);
+    }
+
+    // Sales collection
+    match /sales/{saleId} {
+      allow get: if isValidId(saleId);
+      allow list: if true;
+      allow create: if isValidId(saleId)
+        && incoming().id == saleId
+        && incoming().invoiceNumber is string && incoming().invoiceNumber.size() <= 64
+        && incoming().customerName is string && incoming().customerName.size() <= 200
+        && incoming().total is number
+        && (incoming().status == 'completada' || incoming().status == 'anulada');
+      allow update: if isValidId(saleId)
+        && incoming().id == existing().id
+        && (incoming().status == 'completada' || incoming().status == 'anulada');
+      allow delete: if isValidId(saleId);
+    }
+
+    // Stock Movements collection
+    match /movements/{movementId} {
+      allow get: if isValidId(movementId);
+      allow list: if true;
+      allow create: if isValidId(movementId)
+        && incoming().id == movementId
+        && incoming().productId is string && incoming().productId.size() <= 128
+        && incoming().quantityChange is number
+        && incoming().newStock is number;
+      allow update: if isValidId(movementId) && incoming().id == existing().id;
+      allow delete: if isValidId(movementId);
+    }
+
+    // Business Config collection
+    match /config/{configId} {
+      allow get: if isValidId(configId);
+      allow list: if true;
+      allow create, update: if isValidId(configId)
+        && incoming().businessName is string && incoming().businessName.size() <= 150
+        && incoming().currency is string && incoming().currency.size() <= 20;
+      allow delete: if isValidId(configId);
+    }
+  }
+}

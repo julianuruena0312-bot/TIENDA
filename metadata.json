@@ -1,0 +1,6 @@
+{
+  "name": "Moon Store - Gestor de Compras, Ventas e Inventario",
+  "description": "Sistema integral de inventario, punto de venta y control comercial para Moon Store - Tienda para Mujeres.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

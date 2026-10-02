@@ -1,0 +1,117 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "Product in the business inventory",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "code": { "type": "string", "maxLength": 64 },
+        "name": { "type": "string", "maxLength": 200 },
+        "category": { "type": "string", "maxLength": 100 },
+        "costPrice": { "type": "number" },
+        "salePrice": { "type": "number" },
+        "stock": { "type": "number" },
+        "minStock": { "type": "number" },
+        "unit": { "type": "string", "enum": ["unidad", "paquete", "caja", "kg", "litro", "metro", "par"] },
+        "description": { "type": "string", "maxLength": 1000 },
+        "imageUrl": { "type": "string", "maxLength": 500000 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "code", "name", "category", "costPrice", "salePrice", "stock", "minStock", "unit", "createdAt", "updatedAt"]
+    },
+    "Purchase": {
+      "title": "Purchase",
+      "description": "Stock inventory purchase record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "invoiceNumber": { "type": "string", "maxLength": 64 },
+        "date": { "type": "string" },
+        "supplierName": { "type": "string", "maxLength": 200 },
+        "total": { "type": "number" },
+        "paymentMethod": { "type": "string", "enum": ["efectivo", "transferencia", "tarjeta", "credito"] },
+        "notes": { "type": "string", "maxLength": 1000 }
+      },
+      "required": ["id", "invoiceNumber", "date", "supplierName", "total", "paymentMethod"]
+    },
+    "Sale": {
+      "title": "Sale",
+      "description": "Point of sale completed or cancelled sale transaction",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "invoiceNumber": { "type": "string", "maxLength": 64 },
+        "date": { "type": "string" },
+        "customerName": { "type": "string", "maxLength": 200 },
+        "customerPhone": { "type": "string", "maxLength": 64 },
+        "seller": { "type": "string", "maxLength": 64 },
+        "paidTo": { "type": "string", "maxLength": 64 },
+        "deliveryFee": { "type": "number" },
+        "deliveryPaidTo": { "type": "string", "maxLength": 64 },
+        "subtotal": { "type": "number" },
+        "discount": { "type": "number" },
+        "total": { "type": "number" },
+        "paymentMethod": { "type": "string", "enum": ["efectivo", "tarjeta", "nequi", "daviplata", "bancolombia", "llave", "transferencia", "otro"] },
+        "notes": { "type": "string", "maxLength": 1000 },
+        "status": { "type": "string", "enum": ["completada", "anulada"] }
+      },
+      "required": ["id", "invoiceNumber", "date", "customerName", "subtotal", "discount", "total", "paymentMethod", "status"]
+    },
+    "StockMovement": {
+      "title": "StockMovement",
+      "description": "Inventory movement audit log",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "date": { "type": "string" },
+        "type": { "type": "string", "enum": ["compra", "venta", "ajuste_manual", "anulacion_venta"] },
+        "productId": { "type": "string", "maxLength": 128 },
+        "productName": { "type": "string", "maxLength": 200 },
+        "quantityChange": { "type": "number" },
+        "previousStock": { "type": "number" },
+        "newStock": { "type": "number" },
+        "referenceId": { "type": "string", "maxLength": 128 },
+        "notes": { "type": "string", "maxLength": 1000 }
+      },
+      "required": ["id", "date", "type", "productId", "productName", "quantityChange", "previousStock", "newStock"]
+    },
+    "BusinessConfig": {
+      "title": "BusinessConfig",
+      "description": "Store profile and business settings",
+      "type": "object",
+      "properties": {
+        "businessName": { "type": "string", "maxLength": 150 },
+        "ownerName": { "type": "string", "maxLength": 150 },
+        "phone": { "type": "string", "maxLength": 60 },
+        "address": { "type": "string", "maxLength": 250 },
+        "currency": { "type": "string", "maxLength": 20 },
+        "taxRate": { "type": "number" }
+      },
+      "required": ["businessName", "ownerName", "phone", "address", "currency", "taxRate"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": { "$ref": "#/entities/Product" },
+      "description": "Collection of business products"
+    },
+    "/purchases/{purchaseId}": {
+      "schema": { "$ref": "#/entities/Purchase" },
+      "description": "Collection of supplier inventory purchases"
+    },
+    "/sales/{saleId}": {
+      "schema": { "$ref": "#/entities/Sale" },
+      "description": "Collection of customer sales transactions"
+    },
+    "/movements/{movementId}": {
+      "schema": { "$ref": "#/entities/StockMovement" },
+      "description": "Collection of inventory stock movement history"
+    },
+    "/config/{configId}": {
+      "schema": { "$ref": "#/entities/BusinessConfig" },
+      "description": "Global store configuration"
+    }
+  }
+}

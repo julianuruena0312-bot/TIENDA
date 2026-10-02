@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-50: #fdf5f7;
+  --color-brand-100: #fce8ed;
+  --color-brand-200: #f9d0dc;
+  --color-brand-300: #f3a7bc;
+  --color-brand-400: #e77c99;
+  --color-brand-500: #d16b88;
+  --color-brand-600: #c86d85;
+  --color-brand-700: #b0546d;
+  --color-brand-800: #934258;
+  --color-brand-900: #7b384a;
+  --color-brand-950: #491c28;
+
+  --color-rose-50: #fdf5f7;
+  --color-rose-100: #fce8ed;
+  --color-rose-200: #f9d0dc;
+  --color-rose-300: #f3a7bc;
+  --color-rose-400: #e77c99;
+  --color-rose-500: #d16b88;
+  --color-rose-600: #c86d85;
+  --color-rose-700: #b0546d;
+  --color-rose-800: #934258;
+  --color-rose-900: #7b384a;
+  --color-rose-950: #491c28;
+}
+
+/* Custom scrollbars and boutique smooth typography */
+::selection {
+  background-color: #fce8ed;
+  color: #7b384a;
+}
